@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import {Picker} from '@react-native-community/picker';
+
 import {
   Container,
   Header,
@@ -20,7 +22,6 @@ import {
   Title,
   Button,
 } from 'native-base';
-import Menu from './Menu';
 import SideMenu from 'react-native-side-menu';
 import Icons from 'react-native-vector-icons/Ionicons';
 import {SvgUri, SvgCssUri} from 'react-native-svg';
@@ -48,6 +49,7 @@ export default class Stack extends Component {
       displaySpinn: 'flex',
       displayAll: 'none',
       loading: true,
+      sort: '',
     };
   }
   componentDidMount = () => {
@@ -124,11 +126,51 @@ export default class Stack extends Component {
   movieSort = () => {
     this.state.topPopulerMovie.sort();
   };
+  Sort = (first, last) => {
+    if (this.state.sort === 'Sort') {
+      var nameA = first.first_air_date.toUpperCase(); // ignore upper and lowercase
+      var nameB = last.first_air_date.toUpperCase(); // ignore upper and lowercase
+      if (nameA > nameB) {
+        return -1;
+      }
+      if (nameA < nameB) {
+        return 1;
+      }
+
+      // names must be equal
+      return 0;
+    } else if (this.state.sort === 'ASC') {
+      var nameA = first.name.toUpperCase(); // ignore upper and lowercase
+      var nameB = last.name.toUpperCase(); // ignore upper and lowercase
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+
+      // names must be equal
+      return 0;
+    } else if (this.state.sort === 'DESC') {
+      var nameA = first.name.toUpperCase(); // ignore upper and lowercase
+      var nameB = last.name.toUpperCase(); // ignore upper and lowercase
+      if (nameA > nameB) {
+        return -1;
+      }
+      if (nameA < nameB) {
+        return 1;
+      }
+
+      // names must be equal
+      return 0;
+    }
+  };
   List = () => {
     // setTimeout(() => {
     return (
       <ScrollView style={{display: this.state.displayPopularTv}}>
         {this.state.topPopulerMovie
+          .sort((a, b) => this.Sort(a, b))
           .filter((data) => this.searchFor(data))
           .map((film) => {
             return (
@@ -152,9 +194,9 @@ export default class Stack extends Component {
                       });
                     }}>
                     <Image
-                      style={{width: 120, height: 100}}
+                      style={{width: 120, height: 150}}
                       source={{
-                        uri: `https://image.tmdb.org/t/p/w500/${film.backdrop_path}`,
+                        uri: `https://image.tmdb.org/t/p/w500/${film.poster_path}`,
                       }}
                     />
                   </TouchableOpacity>
@@ -169,7 +211,7 @@ export default class Stack extends Component {
                     }}>
                     {film.title || film.name}
                   </Text>
-                  <Text numberOfLines={2} style={{color: '#F4F4F4'}}>
+                  <Text numberOfLines={3} style={{color: '#F4F4F4'}}>
                     {' '}
                     {film.overview}{' '}
                   </Text>
@@ -215,7 +257,6 @@ export default class Stack extends Component {
     }
   };
   render() {
-    const menu = <Menu navigator={navigator} />;
     console.log(this.state.topPopulerMovie.length);
     return (
       <View style={{flex: 1}}>
@@ -331,11 +372,45 @@ export default class Stack extends Component {
                 borderColor: '#F4F4F4',
                 borderRadius: 10,
                 margin: 10,
+                textAlign: 'center',
               }}>
               <Text style={{fontSize: 20, fontWeight: 'bold'}}>
                 Top Tv Popular
               </Text>
             </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignSelf: 'center',
+                borderWidth: 1,
+                borderColor: this.state.white,
+                borderRadius: 10,
+              }}>
+              <View style={{justifyContent: 'center', padding: 0}}>
+                <Text style={{fontWeight: 'bold', paddingLeft: 10}}>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      color: this.state.white,
+                    }}>
+                    Sort :
+                  </Text>
+                </Text>
+              </View>
+              <View>
+                <Picker
+                  selectedValue={this.state.sort}
+                  style={{width: 150, color: this.state.white}}
+                  onValueChange={(itemValue, itemIndex) =>
+                    this.setState({sort: itemValue})
+                  }>
+                  <Picker.Item label="Sort" value="Sort" />
+                  <Picker.Item label="ASC" value="ASC" />
+                  <Picker.Item label="DESC" value="DESC" />
+                </Picker>
+              </View>
+            </View>
           </View>
           <View style={{flex: 1}}></View>
 

@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {Card, CardItem, Button} from 'native-base';
-import Menu from './Menu';
 import Icons from 'react-native-vector-icons/Ionicons';
 import Axios from 'axios';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
@@ -149,7 +148,6 @@ export default class Stack extends Component {
     }
   };
   render() {
-    const menu = <Menu navigator={navigator} />;
     return (
       <View style={{flex: 1}}>
         <this.Spinner />
@@ -189,7 +187,7 @@ export default class Stack extends Component {
                   </Button>
                   <Button transparent onPress={() => this.Move('Top Movie')}>
                     <Text style={{color: this.state.white}}>
-                      Get Movie Popular
+                      Top Movie Popular
                     </Text>
                   </Button>
                 </View>
@@ -324,7 +322,7 @@ export default class Stack extends Component {
                         />
                       </CardItem>
                     </TouchableOpacity>
-                    <Text
+                    <Text numberOfLines={2}
                       style={{margin: 5, fontWeight: 'bold', color: '#F4F4F4'}}
                       onPress={() =>
                         this.props.navigation.navigate('Detail', {
@@ -436,7 +434,7 @@ export default class Stack extends Component {
               })}
               <View style={{justifyContent: 'center'}}>
                 <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate('Movie')}>
+                  onPress={() => this.props.navigation.navigate('Tv')}>
                   <Text
                     style={{
                       color: '#F4F4F4',
@@ -476,9 +474,9 @@ export default class Stack extends Component {
                             });
                           }}>
                           <Image
-                            style={{width: 120, height: 100}}
+                            style={{width: 120, height: 150}}
                             source={{
-                              uri: `https://image.tmdb.org/t/p/w500/${topPopulerMovie.backdrop_path}`,
+                              uri: `https://image.tmdb.org/t/p/w500/${topPopulerMovie.poster_path}`,
                             }}
                           />
                         </TouchableOpacity>
@@ -493,7 +491,7 @@ export default class Stack extends Component {
                           }}>
                           {topPopulerMovie.title || topPopulerMovie.name}
                         </Text>
-                        <Text numberOfLines={2} style={{color: '#F4F4F4'}}>
+                        <Text numberOfLines={3} style={{color: '#F4F4F4'}}>
                           {' '}
                           {topPopulerMovie.overview}{' '}
                         </Text>

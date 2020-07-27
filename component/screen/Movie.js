@@ -5,7 +5,9 @@ import {
   View,
   Image,
   TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
+import {Picker} from '@react-native-community/picker';
 import {
   Container,
   Header,
@@ -20,7 +22,6 @@ import {
   Title,
   Button,
 } from 'native-base';
-import Menu from './Menu';
 import SideMenu from 'react-native-side-menu';
 import Icons from 'react-native-vector-icons/Ionicons';
 import {SvgUri, SvgCssUri} from 'react-native-svg';
@@ -48,6 +49,7 @@ export default class Stack extends Component {
       displayAll: 'none',
       loading: true,
       displaySpinn: 'flex',
+      sort: '',
     };
   }
   Move = (tes) => {
@@ -124,6 +126,7 @@ export default class Stack extends Component {
     return (
       <ScrollView style={{display: this.state.displayPopularMovie}}>
         {this.state.topPopulerMovie
+          .sort((a, b) => this.Sort(a, b))
           .filter((data) => this.searchFor(data))
           .map((topPopulerMovie) => {
             return (
@@ -147,9 +150,9 @@ export default class Stack extends Component {
                       });
                     }}>
                     <Image
-                      style={{width: 120, height: 100}}
+                      style={{width: 120, height: 150}}
                       source={{
-                        uri: `https://image.tmdb.org/t/p/w500/${topPopulerMovie.backdrop_path}`,
+                        uri: `https://image.tmdb.org/t/p/w500/${topPopulerMovie.poster_path}`,
                       }}
                     />
                   </TouchableOpacity>
@@ -164,7 +167,7 @@ export default class Stack extends Component {
                     }}>
                     {topPopulerMovie.title || topPopulerMovie.name}
                   </Text>
-                  <Text numberOfLines={2} style={{color: '#F4F4F4'}}>
+                  <Text numberOfLines={3} style={{color: '#F4F4F4'}}>
                     {' '}
                     {topPopulerMovie.overview}{' '}
                   </Text>
@@ -201,8 +204,46 @@ export default class Stack extends Component {
       this.setState({side: 'none'});
     }
   };
+  Sort = (first, last) => {
+    if (this.state.sort === 'Sort') {
+      var nameA = first.release_date.toUpperCase(); // ignore upper and lowercase
+      var nameB = last.release_date.toUpperCase(); // ignore upper and lowercase
+      if (nameA > nameB) {
+        return -1;
+      }
+      if (nameA < nameB) {
+        return 1;
+      }
+
+      // names must be equal
+      return 0;
+    } else if (this.state.sort === 'ASC') {
+      var nameA = first.title.toUpperCase(); // ignore upper and lowercase
+      var nameB = last.title.toUpperCase(); // ignore upper and lowercase
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+
+      // names must be equal
+      return 0;
+    } else if (this.state.sort === 'DESC') {
+      var nameA = first.title.toUpperCase(); // ignore upper and lowercase
+      var nameB = last.title.toUpperCase(); // ignore upper and lowercase
+      if (nameA > nameB) {
+        return -1;
+      }
+      if (nameA < nameB) {
+        return 1;
+      }
+
+      // names must be equal
+      return 0;
+    }
+  };
   render() {
-    const menu = <Menu navigator={navigator} />;
     console.log(this.state.topPopulerMovie.length);
     return (
       <View style={{flex: 1}}>
@@ -308,21 +349,46 @@ export default class Stack extends Component {
             />
           </View>
           <View style={{alignSelf: 'center'}}>
-            <Text
-              style={{
-                marginTop: 10,
-                paddingHorizontal: 10,
-                color: '#F4F4F4',
-                borderWidth: 1,
-                borderColor: '#F4F4F4',
-                borderRadius: 10,
-                margin: 10,
-              }}>
+            <Text style={styles.judul}>
               <Text style={{fontSize: 20, fontWeight: 'bold'}}>
                 Top Popular movie
               </Text>
             </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignSelf: 'center',
+                borderWidth: 1,
+                borderColor: this.state.white,
+                borderRadius: 10,
+              }}>
+              <View style={{justifyContent: 'center', padding: 0}}>
+                <Text style={{fontWeight: 'bold', paddingLeft: 10}}>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      color: this.state.white,
+                    }}>
+                    Sort :
+                  </Text>
+                </Text>
+              </View>
+              <View>
+                <Picker
+                  selectedValue={this.state.sort}
+                  style={{width: 150, color: this.state.white}}
+                  onValueChange={(itemValue, itemIndex) =>
+                    this.setState({sort: itemValue})
+                  }>
+                  <Picker.Item label="Sort" value="Sort" />
+                  <Picker.Item label="ASC" value="ASC" />
+                  <Picker.Item label="DESC" value="DESC" />
+                </Picker>
+              </View>
+            </View>
           </View>
+
           <View style={{flex: 1}}></View>
 
           <this.List />
@@ -331,3 +397,14 @@ export default class Stack extends Component {
     );
   }
 }
+const styles = StyleSheet.create({
+  judul: {
+    marginTop: 10,
+    paddingHorizontal: 10,
+    color: '#F4F4F4',
+    borderWidth: 1,
+    borderColor: '#F4F4F4',
+    borderRadius: 10,
+    margin: 10,
+  },
+});
